@@ -35,3 +35,40 @@ export async function findRelease(job) {
   const r = await gh(`/releases/tags/job-${job}`);
   return r.ok ? r.json() : null;
 }
+
+// Reglages envoyes par le site. Le moteur et l'agent revalident de leur cote.
+const FORMATS = ["9:16", "4:5", "1:1", "16:9"];
+const CATS = ["auto", "chat", "irl", "gaming", "podcast"];
+export function cleanOpts(o) {
+  o = o && typeof o === "object" ? o : {};
+  const opts = {
+    format: FORMATS.includes(o.format) ? o.format : "9:16",
+    cat: CATS.includes(o.cat) ? o.cat : "auto",
+    cut: o.cut !== false,
+    title: o.title !== false,
+    find: String(o.find || "").replace(/\s+/g, " ").trim().slice(0, 200),
+  };
+  if (o.start != null || o.end != null) {
+    const a = Number(o.start), b = Number(o.end);
+    if (!(a >= 0 && b > a && b <= 86400 && b - a <= 3600))
+      return { error: "Partie à scanner invalide : la fin doit suivre le début, 1 heure maximum." };
+    opts.start = a; opts.end = b;
+  }
+  return { opts };
+}
+
+// Liens acceptes. On renvoie une URL reconstruite, jamais celle collee telle quelle.
+const SOURCES = [
+  [/^https:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/,
+    (m) => `https://www.youtube.com/watch?v=${m[4]}`],
+  [/^https:\/\/(www\.|m\.)?twitch\.tv\/videos\/(\d{5,12})/, (m) => `https://www.twitch.tv/videos/${m[2]}`],
+  [/^https:\/\/(www\.)?kick\.com\/([\w-]{1,40})\/videos\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/,
+    (m) => `https://kick.com/${m[2]}/videos/${m[3]}`],
+];
+export function canonUrl(url) {
+  for (const [re, f] of SOURCES) {
+    const m = re.exec(String(url || ""));
+    if (m) return f(m);
+  }
+  return null;
+}
