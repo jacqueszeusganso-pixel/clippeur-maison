@@ -86,8 +86,9 @@
   .paste input:focus{outline:none;border-color:var(--accent)}
   .note{color:#6d6b64;font-size:13px;margin-top:14px}
   .note.err{color:var(--accent)}
+  .paste .link{flex:1 1 100%}
   .drop{flex:1 1 100%;display:block;border:1px dashed rgba(244,241,234,.28);border-radius:12px;
-    padding:18px 16px;background:var(--bg-2);color:var(--muted);font-size:14px;cursor:pointer;
+    padding:12px 16px;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;
     transition:border-color .2s var(--ease)}
   .drop b{color:var(--ink)}
   .drop:hover,.drop.over,.drop:focus-within{border-color:var(--accent)}
@@ -232,12 +233,13 @@
   <section class="hero wrap" id="top">
     <div>
       <span class="eyebrow">Klap, version maison</span>
-      <h1>Une vidéo.<br>Des shorts qui <em>cartonnent.</em></h1>
-      <p class="lead">Dépose ta vidéo. L'outil repère les meilleurs moments, découpe, recadre sur le visage et sous-titre. Prêt à poster.</p>
+      <h1>Un lien.<br>Des shorts qui <em>cartonnent.</em></h1>
+      <p class="lead">Colle un lien YouTube. L'outil repère les meilleurs moments, découpe, recadre sur le visage et sous-titre. Prêt à poster.</p>
       <form class="paste" id="form">
+        <input type="url" id="link" class="link" inputmode="url" placeholder="Colle le lien YouTube…" aria-label="Lien de la vidéo YouTube">
         <label class="drop" id="drop">
-          <input type="file" id="file" accept="video/*" required>
-          <span id="dropTxt"><b>Choisis une vidéo</b> ou glisse-la ici · 500 Mo max</span>
+          <input type="file" id="file" accept="video/*">
+          <span id="dropTxt">Pas de lien ? <b>Dépose un fichier vidéo</b> · 500 Mo max</span>
         </label>
         <select id="clips" aria-label="Nombre de shorts">
           <option value="1">1 short</option><option value="2">2 shorts</option>
@@ -373,8 +375,9 @@
 
   form.addEventListener("submit",async function(e){
     e.preventDefault();
-    var f=file.files[0], code=$("code").value.trim();
-    if(!f) return say("Choisis d'abord une vidéo.",true);
+    var f=file.files[0], code=$("code").value.trim(), link=$("link").value.trim();
+    if(link) return sendLink(link,code);
+    if(!f) return say("Colle un lien YouTube ou choisis une vidéo.",true);
     if(!/^video\//.test(f.type)) return say("Ce fichier n'est pas une vidéo.",true);
     if(f.size>MAX) return say("Vidéo trop lourde : 500 Mo maximum.",true);
     go.disabled=true;
@@ -399,6 +402,20 @@
     }catch(err){ say(err.message,true); go.disabled=false }
   });
 
+  var YT=/^https:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]{11}/;
+  async function sendLink(link,code){
+    if(!YT.test(link)) return say("Ce lien n'est pas un lien YouTube valide.",true);
+    go.disabled=true;
+    try{
+      say("Envoi du lien…");
+      var s=await api("/api/link",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,url:link,clips:Number($("clips").value)})});
+      try{ localStorage.setItem("clip-code",code) }catch(e){}
+      history.replaceState(null,"","?job="+s.job);
+      say("Lien reçu. Garde l'adresse de cette page pour revenir plus tard.");
+      follow(s.job);
+    }catch(err){ say(err.message,true); go.disabled=false }
+  }
+
   function showStudio(title,text){
     $("studio").hidden=false; $("stTitle").textContent=title; $("stText").textContent=text;
     $("studio").scrollIntoView({behavior:"smooth"});
@@ -414,6 +431,9 @@
       try{
         var d=await api("/api/status?job="+job);
         if(d.state==="done") return render(d.shorts);
+        if(d.state==="waiting"){ $("stTitle").textContent="En attente du moteur."; $("stText").textContent="Le PC qui récupère les vidéos YouTube est éteint ou en veille. Le travail démarrera dès qu'il sera allumé."; t0=Date.now() }
+        else if(d.state==="fetching"){ $("stTitle").textContent="Récupération de la vidéo."; $("stText").textContent="La vidéo YouTube est en cours de téléchargement, la découpe suit juste après."; t0=Date.now() }
+        else { $("stTitle").textContent="Découpe en cours."; $("stText").textContent="Le moteur transcrit, choisit les moments et rend chaque short. Compte 3 à 8 minutes." }
         if(d.state==="error") return fail("Le moteur a échoué sur cette vidéo. Essaie une vidéo avec de la parole, ou plus courte.");
       }catch(err){ if(/introuvable|unknown/i.test(err.message)) return fail("Travail introuvable.") }
       if(min>30) return fail("Ça prend trop de temps. Réessaie avec une vidéo plus courte.");
