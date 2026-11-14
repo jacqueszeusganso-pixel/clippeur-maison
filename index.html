@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Clippeur maison — un lien, des shorts prêts à poster</title>
-<meta name="description" content="Colle un lien YouTube, récupère des shorts verticaux 9:16 : moments choisis par IA, recadrage sur le visage, sous-titres incrustés, titre, score de viralité et hashtags.">
+<meta name="description" content="Dépose une vidéo, récupère des shorts verticaux 9:16 : moments choisis par IA, recadrage sur le visage, sous-titres incrustés, titre, score de viralité et hashtags.">
 <meta name="theme-color" content="#0A0A0B">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Clippeur maison — un lien, des shorts prêts à poster">
-<meta property="og:description" content="Un lien YouTube entre, des shorts verticaux sous-titrés sortent. Choix des moments par IA, recadrage sur le visage, score de viralité.">
+<meta property="og:description" content="Une vidéo entre, des shorts verticaux sous-titrés sortent. Choix des moments par IA, recadrage sur le visage, score de viralité.">
 <meta property="og:image" content="og.svg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,6 +85,32 @@
   .paste input::placeholder{color:#6d6b64}
   .paste input:focus{outline:none;border-color:var(--accent)}
   .note{color:#6d6b64;font-size:13px;margin-top:14px}
+  .note.err{color:var(--accent)}
+  .drop{flex:1 1 100%;display:block;border:1px dashed rgba(244,241,234,.28);border-radius:12px;
+    padding:18px 16px;background:var(--bg-2);color:var(--muted);font-size:14px;cursor:pointer;
+    transition:border-color .2s var(--ease)}
+  .drop b{color:var(--ink)}
+  .drop:hover,.drop.over,.drop:focus-within{border-color:var(--accent)}
+  .drop input{position:absolute;opacity:0;width:1px;height:1px}
+  .paste select{background:var(--bg-2);border:1px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:14px 12px;font:inherit;font-size:15px}
+  .paste input[type=password]{min-width:140px}
+  .paste button:disabled{opacity:.5;cursor:wait;transform:none}
+  .meter{height:3px;background:var(--line);border-radius:3px;margin-top:14px;max-width:460px;overflow:hidden}
+  .meter i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s var(--ease)}
+
+  /* résultats */
+  #studio[hidden]{display:none}
+  .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+  .res{border:1px solid var(--line);border-radius:16px;background:var(--bg-2);overflow:hidden;display:flex;flex-direction:column}
+  .res video{width:100%;aspect-ratio:9/16;background:#000;display:block}
+  .res .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .res h3{font-family:"Bricolage Grotesque";font-weight:700;font-size:1.08rem;line-height:1.2}
+  .res .sc{color:var(--accent);font-family:"Bricolage Grotesque";font-weight:800}
+  .res p{color:var(--muted);font-size:.93rem}
+  .res .hash{color:var(--accent);font-size:.9rem;font-weight:600}
+  .res .acts{display:flex;gap:8px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
+  .res .acts .btn{padding:9px 14px;font-size:14px}
 
   /* ---- short card (objet héros + démo) ---- */
   .stage{display:flex;justify-content:center;perspective:1200px}
@@ -206,13 +232,22 @@
   <section class="hero wrap" id="top">
     <div>
       <span class="eyebrow">Klap, version maison</span>
-      <h1>Un lien.<br>Dix shorts qui <em>cartonnent.</em></h1>
-      <p class="lead">Colle l'URL d'une vidéo YouTube. L'outil repère les meilleurs moments, découpe, recadre sur le visage et sous-titre. Prêt à poster.</p>
-      <form class="paste" onsubmit="return toDemo(event)">
-        <input type="url" inputmode="url" placeholder="https://youtube.com/watch?v=…" aria-label="Lien de la vidéo">
-        <button class="btn btn-primary" type="submit">Clipper →</button>
+      <h1>Une vidéo.<br>Des shorts qui <em>cartonnent.</em></h1>
+      <p class="lead">Dépose ta vidéo. L'outil repère les meilleurs moments, découpe, recadre sur le visage et sous-titre. Prêt à poster.</p>
+      <form class="paste" id="form">
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept="video/*" required>
+          <span id="dropTxt"><b>Choisis une vidéo</b> ou glisse-la ici · 500 Mo max</span>
+        </label>
+        <select id="clips" aria-label="Nombre de shorts">
+          <option value="1">1 short</option><option value="2">2 shorts</option>
+          <option value="3" selected>3 shorts</option><option value="4">4 shorts</option>
+          <option value="5">5 shorts</option><option value="6">6 shorts</option>
+        </select>
+        <input type="password" id="code" placeholder="Code d'accès" aria-label="Code d'accès" autocomplete="off" required>
+        <button class="btn btn-primary" type="submit" id="go">Clipper →</button>
       </form>
-      <p class="note">Aperçu du résultat ci-dessous. Le moteur de découpe tourne hors ligne, pas encore branché ici.</p>
+      <p class="note" id="msg" role="status">Le traitement prend 3 à 8 minutes. Tu peux garder l'onglet ouvert ou revenir plus tard avec le même lien.</p>
     </div>
     <div class="stage">
       <div class="short" role="img" aria-label="Exemple de short vertical produit par l'outil, avec sous-titres incrustés et score de viralité">
@@ -225,6 +260,16 @@
     </div>
   </section>
 
+  <section id="studio" class="wrap" hidden>
+    <div class="sec-head">
+      <span class="eyebrow">Ton travail</span>
+      <h2 id="stTitle">Découpe en cours.</h2>
+      <p id="stText">Le moteur transcrit, choisit les moments et rend chaque short.</p>
+      <div class="meter" id="stMeter"><i></i></div>
+    </div>
+    <div class="results" id="results"></div>
+  </section>
+
   <section id="etapes" class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Le pipeline</span>
@@ -232,7 +277,7 @@
       <p>Chaque étape est automatique. Tu colles un lien, tu récupères des fichiers prêts.</p>
     </div>
     <div class="steps reveal">
-      <div class="step"><div class="num">1</div><div><h3>Téléchargement</h3><p>La vidéo est récupérée depuis YouTube, en qualité d'origine.</p></div></div>
+      <div class="step"><div class="num">1</div><div><h3>Envoi</h3><p>Ta vidéo part vers le moteur en morceaux, puis elle est effacée dès que la découpe commence.</p></div></div>
       <div class="step"><div class="num">2</div><div><h3>Transcription mot à mot</h3><p>Whisper transcrit tout avec le timing précis de chaque mot, pour des sous-titres calés.</p></div></div>
       <div class="step"><div class="num">3</div><div><h3>Choix par IA</h3><p>Un modèle repère les passages les plus accrocheurs et leur donne un titre, un score et des hashtags.</p></div></div>
       <div class="step"><div class="num">4</div><div><h3>Découpe 9:16</h3><p>Chaque extrait est recadré sur le visage du sujet et sous-titré, en vertical plein cadre.</p></div></div>
@@ -274,7 +319,7 @@
       <div class="box">
         <h3><span class="ic" style="background:var(--accent)"></span> Ça marche déjà</h3>
         <ul class="live">
-          <li>Téléchargement, transcription et découpe de bout en bout</li>
+          <li>Dépôt de vidéo et découpe en ligne, sans rien installer</li>
           <li>Choix des moments, titre et score par IA</li>
           <li>Recadrage sur le visage (OpenCV), pas au centre bêtement</li>
           <li>Sous-titres incrustés + pack titre/légende/hashtags</li>
@@ -283,7 +328,7 @@
       <div class="box">
         <h3><span class="ic" style="background:var(--muted)"></span> La suite</h3>
         <ul>
-          <li>Interface web branchée sur le moteur (hébergement dédié au traitement vidéo)</li>
+          <li>Coller un lien YouTube directement (bloqué par YouTube sur les serveurs pour l'instant)</li>
           <li>Connexion d'un compte TikTok / Instagram</li>
           <li>Publication assistée, validée à chaque fois</li>
           <li>Plusieurs styles de sous-titres</li>
@@ -306,9 +351,101 @@
     es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})
   },{threshold:.15});
   document.querySelectorAll(".reveal").forEach(function(el){io.observe(el)});
-  // CTA honnête : amène à l'exemple
-  function toDemo(e){e.preventDefault();document.getElementById("demo").scrollIntoView({behavior:"smooth"});return false}
   document.getElementById("y").textContent=new Date().getFullYear();
+
+  // ---- dépôt, envoi en morceaux, suivi ----
+  var PART=4*1024*1024, MAX=500*1024*1024, $=function(id){return document.getElementById(id)};
+  var form=$("form"), file=$("file"), drop=$("drop"), msg=$("msg"), go=$("go"), bar=$("stMeter").firstElementChild;
+  try{ $("code").value=localStorage.getItem("clip-code")||"" }catch(e){}
+
+  function say(t,err){ msg.textContent=t; msg.classList.toggle("err",!!err) }
+  function showFile(){ var f=file.files[0]; $("dropTxt").innerHTML=f?"<b></b> · "+(f.size/1048576).toFixed(0)+" Mo":$("dropTxt").innerHTML; if(f) $("dropTxt").firstChild.textContent=f.name }
+  file.addEventListener("change",showFile);
+  ["dragenter","dragover"].forEach(function(t){drop.addEventListener(t,function(e){e.preventDefault();drop.classList.add("over")})});
+  ["dragleave","drop"].forEach(function(t){drop.addEventListener(t,function(){drop.classList.remove("over")})});
+  drop.addEventListener("drop",function(e){e.preventDefault(); if(e.dataTransfer.files.length){file.files=e.dataTransfer.files; showFile()}});
+
+  async function api(path,opts){
+    var r=await fetch(path,opts), d=await r.json().catch(function(){return{}});
+    if(!r.ok) throw new Error(d.error||"Erreur réseau, réessaie.");
+    return d;
+  }
+
+  form.addEventListener("submit",async function(e){
+    e.preventDefault();
+    var f=file.files[0], code=$("code").value.trim();
+    if(!f) return say("Choisis d'abord une vidéo.",true);
+    if(!/^video\//.test(f.type)) return say("Ce fichier n'est pas une vidéo.",true);
+    if(f.size>MAX) return say("Vidéo trop lourde : 500 Mo maximum.",true);
+    go.disabled=true;
+    try{
+      say("Préparation…");
+      var s=await api("/api/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,size:f.size})});
+      try{ localStorage.setItem("clip-code",code) }catch(e){}
+      var n=Math.ceil(f.size/PART);
+      showStudio("Envoi de la vidéo.","Ne ferme pas l'onglet pendant l'envoi.");
+      for(var i=0;i<n;i++){
+        for(var t=0;;t++){
+          try{ await api("/api/part?job="+s.job+"&i="+i,{method:"POST",headers:{"x-code":code},body:f.slice(i*PART,(i+1)*PART)}); break }
+          catch(err){ if(t>=2) throw err }
+        }
+        bar.style.width=Math.round((i+1)/n*100)+"%";
+        say("Envoi "+Math.round((i+1)/n*100)+" %");
+      }
+      await api("/api/clip",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,job:s.job,clips:Number($("clips").value)})});
+      history.replaceState(null,"","?job="+s.job);
+      say("Vidéo envoyée. Garde ce lien pour revenir plus tard.");
+      follow(s.job);
+    }catch(err){ say(err.message,true); go.disabled=false }
+  });
+
+  function showStudio(title,text){
+    $("studio").hidden=false; $("stTitle").textContent=title; $("stText").textContent=text;
+    $("studio").scrollIntoView({behavior:"smooth"});
+  }
+
+  function follow(job){
+    var t0=Date.now();
+    showStudio("Découpe en cours.","Le moteur transcrit, choisit les moments et rend chaque short. Compte 3 à 8 minutes.");
+    bar.style.width="0";
+    (async function tick(){
+      var min=(Date.now()-t0)/60000;
+      bar.style.width=Math.min(95,min/8*100)+"%";
+      try{
+        var d=await api("/api/status?job="+job);
+        if(d.state==="done") return render(d.shorts);
+        if(d.state==="error") return fail("Le moteur a échoué sur cette vidéo. Essaie une vidéo avec de la parole, ou plus courte.");
+      }catch(err){ if(/introuvable|unknown/i.test(err.message)) return fail("Travail introuvable.") }
+      if(min>30) return fail("Ça prend trop de temps. Réessaie avec une vidéo plus courte.");
+      setTimeout(tick,6000);
+    })();
+  }
+
+  function fail(t){ $("stTitle").textContent="Échec."; $("stText").textContent=t; go.disabled=false }
+
+  function render(shorts){
+    bar.style.width="100%"; go.disabled=false;
+    $("stTitle").textContent=shorts.length+" short"+(shorts.length>1?"s":"")+" prêt"+(shorts.length>1?"s":"")+".";
+    $("stText").textContent="Regarde, télécharge, copie la légende.";
+    var box=$("results"); box.textContent="";
+    shorts.sort(function(a,b){return b.score-a.score}).forEach(function(s){
+      var el=document.createElement("article"); el.className="res";
+      el.innerHTML='<video controls playsinline preload="metadata"></video><div class="body"><h3></h3><div class="sc"></div><p></p><div class="hash"></div><div class="acts"><a class="btn btn-primary" download>Télécharger</a><button class="btn btn-ghost" type="button">Copier le texte</button></div></div>';
+      el.querySelector("video").src=s.url;
+      el.querySelector("h3").textContent=s.title;
+      el.querySelector(".sc").textContent=s.score+" / 100";
+      el.querySelector("p").textContent=s.caption;
+      el.querySelector(".hash").textContent=s.hashtags;
+      el.querySelector("a").href=s.url;
+      el.querySelector("button").addEventListener("click",function(){
+        navigator.clipboard.writeText(s.title+"\n\n"+s.caption+"\n\n"+s.hashtags).then(function(){ this.textContent="Copié" }.bind(this));
+      });
+      box.appendChild(el);
+    });
+  }
+
+  var j=new URLSearchParams(location.search).get("job");
+  if(j && /^[a-f0-9]{16}$/.test(j)) follow(j);
 </script>
 </body>
 </html>
