@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <rect width="1200" height="630" fill="#0A0A0B"/>
-  <text x="80" y="300" font-family="Arial, sans-serif" font-weight="800" font-size="92" fill="#F4F1EA" letter-spacing="-3">Une vidéo.</text>
+  <text x="80" y="300" font-family="Arial, sans-serif" font-weight="800" font-size="92" fill="#F4F1EA" letter-spacing="-3">Un lien.</text>
   <text x="80" y="400" font-family="Arial, sans-serif" font-weight="800" font-size="92" letter-spacing="-3"><tspan fill="#F4F1EA">Des shorts qui </tspan><tspan fill="#FF4322">cartonnent.</tspan></text>
-  <text x="80" y="480" font-family="Arial, sans-serif" font-weight="400" font-size="34" fill="#97948C">Clippeur maison : une vidéo, des shorts prêts à poster.</text>
+  <text x="80" y="480" font-family="Arial, sans-serif" font-weight="400" font-size="34" fill="#97948C">Clippeur maison : un lien, des shorts prêts à poster.</text>
   <rect x="980" y="150" width="140" height="250" rx="18" fill="#161518" stroke="#FF4322" stroke-width="2"/>
   <rect x="1060" y="168" width="44" height="26" rx="7" fill="#FF4322"/>
   <text x="1082" y="186" font-family="Arial" font-weight="800" font-size="15" fill="#0A0A0B" text-anchor="middle">92</text>
