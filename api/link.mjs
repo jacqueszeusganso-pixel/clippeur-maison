@@ -1,12 +1,12 @@
 // Recoit un lien YouTube : cree le travail, que l'agent du PC viendra chercher
 import { randomBytes } from "node:crypto";
-import { json, codeOk, gh } from "./_gh.mjs";
+import { json, tooBusy, gh } from "./_gh.mjs";
 
 const YT = /^https:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/;
 
 export async function POST(req) {
   const body = await req.json().catch(() => ({}));
-  if (!codeOk(body.code)) return json({ error: "Code d'accès incorrect." }, 401);
+  if (await tooBusy()) return json({ error: "Trop de demandes en ce moment, réessaie dans une heure." }, 429);
   const m = YT.exec(String(body.url || ""));
   if (!m) return json({ error: "Ce lien n'est pas un lien YouTube valide." }, 400);
   const clips = Number(body.clips);

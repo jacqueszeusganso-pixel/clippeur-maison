@@ -1,9 +1,8 @@
 // Recoit un morceau (4 Mo max) de la video et le range dans la release du travail
-import { json, codeOk, gh, findRelease, PART_BYTES, MAX_BYTES } from "./_gh.mjs";
+import { json, gh, findRelease, PART_BYTES, MAX_BYTES } from "./_gh.mjs";
 
 export async function POST(req) {
   const url = new URL(req.url);
-  if (!codeOk(req.headers.get("x-code"))) return json({ error: "Code d'accès incorrect." }, 401);
   const i = Number(url.searchParams.get("i"));
   if (!Number.isInteger(i) || i < 0 || i >= Math.ceil(MAX_BYTES / PART_BYTES))
     return json({ error: "Morceau invalide." }, 400);

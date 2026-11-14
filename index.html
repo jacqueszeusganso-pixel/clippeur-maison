@@ -246,7 +246,6 @@
           <option value="3" selected>3 shorts</option><option value="4">4 shorts</option>
           <option value="5">5 shorts</option><option value="6">6 shorts</option>
         </select>
-        <input type="password" id="code" placeholder="Code d'accès" aria-label="Code d'accès" autocomplete="off" required>
         <button class="btn btn-primary" type="submit" id="go">Clipper →</button>
       </form>
       <p class="note" id="msg" role="status">Le traitement prend 3 à 8 minutes. Tu peux garder l'onglet ouvert ou revenir plus tard avec le même lien.</p>
@@ -358,7 +357,6 @@
   // ---- dépôt, envoi en morceaux, suivi ----
   var PART=4*1024*1024, MAX=500*1024*1024, $=function(id){return document.getElementById(id)};
   var form=$("form"), file=$("file"), drop=$("drop"), msg=$("msg"), go=$("go"), bar=$("stMeter").firstElementChild;
-  try{ $("code").value=localStorage.getItem("clip-code")||"" }catch(e){}
 
   function say(t,err){ msg.textContent=t; msg.classList.toggle("err",!!err) }
   function showFile(){ var f=file.files[0]; $("dropTxt").innerHTML=f?"<b></b> · "+(f.size/1048576).toFixed(0)+" Mo":$("dropTxt").innerHTML; if(f) $("dropTxt").firstChild.textContent=f.name }
@@ -375,27 +373,26 @@
 
   form.addEventListener("submit",async function(e){
     e.preventDefault();
-    var f=file.files[0], code=$("code").value.trim(), link=$("link").value.trim();
-    if(link) return sendLink(link,code);
+    var f=file.files[0], link=$("link").value.trim();
+    if(link) return sendLink(link);
     if(!f) return say("Colle un lien YouTube ou choisis une vidéo.",true);
     if(!/^video\//.test(f.type)) return say("Ce fichier n'est pas une vidéo.",true);
     if(f.size>MAX) return say("Vidéo trop lourde : 500 Mo maximum.",true);
     go.disabled=true;
     try{
       say("Préparation…");
-      var s=await api("/api/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,size:f.size})});
-      try{ localStorage.setItem("clip-code",code) }catch(e){}
+      var s=await api("/api/start",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({size:f.size})});
       var n=Math.ceil(f.size/PART);
       showStudio("Envoi de la vidéo.","Ne ferme pas l'onglet pendant l'envoi.");
       for(var i=0;i<n;i++){
         for(var t=0;;t++){
-          try{ await api("/api/part?job="+s.job+"&i="+i,{method:"POST",headers:{"x-code":code},body:f.slice(i*PART,(i+1)*PART)}); break }
+          try{ await api("/api/part?job="+s.job+"&i="+i,{method:"POST",body:f.slice(i*PART,(i+1)*PART)}); break }
           catch(err){ if(t>=2) throw err }
         }
         bar.style.width=Math.round((i+1)/n*100)+"%";
         say("Envoi "+Math.round((i+1)/n*100)+" %");
       }
-      await api("/api/clip",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,job:s.job,clips:Number($("clips").value)})});
+      await api("/api/clip",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({job:s.job,clips:Number($("clips").value)})});
       history.replaceState(null,"","?job="+s.job);
       say("Vidéo envoyée. Garde ce lien pour revenir plus tard.");
       follow(s.job);
@@ -403,13 +400,12 @@
   });
 
   var YT=/^https:\/\/(www\.|m\.)?(youtube\.com\/(watch\?v=|shorts\/|live\/)|youtu\.be\/)[\w-]{11}/;
-  async function sendLink(link,code){
+  async function sendLink(link){
     if(!YT.test(link)) return say("Ce lien n'est pas un lien YouTube valide.",true);
     go.disabled=true;
     try{
       say("Envoi du lien…");
-      var s=await api("/api/link",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:code,url:link,clips:Number($("clips").value)})});
-      try{ localStorage.setItem("clip-code",code) }catch(e){}
+      var s=await api("/api/link",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({url:link,clips:Number($("clips").value)})});
       history.replaceState(null,"","?job="+s.job);
       say("Lien reçu. Garde l'adresse de cette page pour revenir plus tard.");
       follow(s.job);

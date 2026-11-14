@@ -1,10 +1,10 @@
 // Ouvre un travail : cree la "release" GitHub qui recevra les morceaux de la video
 import { randomBytes } from "node:crypto";
-import { json, codeOk, gh, MAX_BYTES } from "./_gh.mjs";
+import { json, tooBusy, gh, MAX_BYTES } from "./_gh.mjs";
 
 export async function POST(req) {
   const body = await req.json().catch(() => ({}));
-  if (!codeOk(body.code)) return json({ error: "Code d'accès incorrect." }, 401);
+  if (await tooBusy()) return json({ error: "Trop de demandes en ce moment, réessaie dans une heure." }, 429);
   const size = Number(body.size);
   if (!Number.isFinite(size) || size <= 0 || size > MAX_BYTES)
     return json({ error: "Vidéo trop lourde : 500 Mo maximum." }, 400);

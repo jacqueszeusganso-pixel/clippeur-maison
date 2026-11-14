@@ -1,9 +1,8 @@
 // Lance le moteur (GitHub Actions) sur la video deja envoyee
-import { json, codeOk, gh, findRelease } from "./_gh.mjs";
+import { json, gh, findRelease } from "./_gh.mjs";
 
 export async function POST(req) {
   const body = await req.json().catch(() => ({}));
-  if (!codeOk(body.code)) return json({ error: "Code d'accès incorrect." }, 401);
   const clips = Number(body.clips);
   if (!Number.isInteger(clips) || clips < 1 || clips > 6)
     return json({ error: "Entre 1 et 6 shorts." }, 400);
