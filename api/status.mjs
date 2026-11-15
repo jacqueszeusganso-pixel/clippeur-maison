@@ -7,6 +7,9 @@ export async function GET(req) {
   const rel = await findRelease(new URL(req.url).searchParams.get("job"));
   if (!rel) return json({ state: "unknown", error: "Travail introuvable." }, 404);
   const assets = Object.fromEntries(rel.assets.map((a) => [a.name, a.browser_download_url]));
+  // anciens travaux : GitHub a retire les accents des noms ("jachète" -> "jachete")
+  const ascii = (n) => String(n || "").normalize("NFKD").replace(/[^\x00-\x7f]/g, "");
+  const fileUrl = (n) => assets[n] || assets[ascii(n)] || null;
   if (assets["error.txt"]) return json({ state: "error" });
   if (!assets["shorts.json"]) {
     const step = (rel.body || "").split("\n")[0];
@@ -31,7 +34,7 @@ export async function GET(req) {
       title: String(m.title || ""), score: Number(m.score) || 0,
       caption: String(m.caption || ""), hashtags: String(m.hashtags || ""),
       start: Number(m.start) || 0, end: Number(m.end) || 0,
-      url: (ed && edSpec ? ed.browser_download_url : assets[m.file]) || null,
+      url: (ed && edSpec ? ed.browser_download_url : fileUrl(m.file)) || null,
       n, raw: n ? assets[m.raw] || null : null, dur: Number(m.dur) || 0,
       spec: (ed && edSpec) || m.spec || null,
     };

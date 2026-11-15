@@ -203,7 +203,36 @@
   #edGo{justify-content:center}
   #edGo:disabled{opacity:.5;cursor:wait;transform:none}
   .ed .note{margin-top:0}
+  /* ---- publication ---- */
+  .pub{width:min(860px,calc(100vw - 32px))}
+  .pub-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;padding:22px}
+  .pub-txt{display:flex;flex-direction:column;gap:16px}
+  .plat{border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:var(--bg)}
+  .plat + .plat{margin-top:12px}
+  .plat-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+  .plat-h b{font-family:"Bricolage Grotesque";font-weight:700;font-size:1rem}
+  .plat-h a{color:var(--accent);font-size:13.5px;font-weight:600;white-space:nowrap}
+  .plat-h a:hover{text-decoration:underline}
+  .acc{display:flex;align-items:center;gap:10px;padding:7px 4px;border-radius:8px;cursor:pointer}
+  .acc input{width:17px;height:17px;accent-color:var(--accent);flex:none}
+  .acc img,.acc .ini{width:26px;height:26px;border-radius:50%;flex:none;object-fit:cover;background:var(--card)}
+  .acc .ini{display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted)}
+  .acc span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14.5px}
+  .acc button{background:none;border:0;color:var(--muted);font-size:12.5px;cursor:pointer;padding:4px 6px;border-radius:6px}
+  .acc button:hover{color:var(--ink)}
+  .plat .hint{margin-top:2px}
+  .pub-res{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:14px;font-size:14px}
+  .pub-res li{display:flex;gap:8px;align-items:baseline;color:var(--muted)}
+  .pub-res li b{color:var(--ink);font-weight:600}
+  .pub-res li.ok::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--accent);transform:translateY(-1px)}
+  .pub-res li.err{color:var(--accent)}
+  .pub-res a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+  #pubGo{justify-content:center;width:100%;margin-top:16px}
+  #pubGo:disabled{opacity:.5;cursor:not-allowed;transform:none}
+  .ed .count{float:right;font-weight:500;letter-spacing:0;text-transform:none}
+
   @media(max-width:860px){
+    .pub-grid{grid-template-columns:1fr;gap:22px;padding:16px}
     .ed{width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
     .ed-grid{grid-template-columns:1fr;gap:22px;padding:16px}
     .phone canvas{max-width:180px}
@@ -486,6 +515,36 @@
     </div>
   </dialog>
 
+  <dialog class="ed pub" id="pub" aria-labelledby="pubH">
+    <div class="ed-head">
+      <h3 id="pubH">Publier le short</h3>
+      <button class="ed-x" type="button" id="pubX" aria-label="Fermer">×</button>
+    </div>
+    <div class="pub-grid">
+      <div class="pub-txt">
+        <div>
+          <label class="lab" for="pubTitle">Titre <span class="count" id="pubTitleN"></span></label>
+          <input type="text" id="pubTitle" maxlength="100">
+        </div>
+        <div>
+          <label class="lab" for="pubCap">Légende</label>
+          <textarea id="pubCap" rows="4" maxlength="1500"></textarea>
+        </div>
+        <div>
+          <label class="lab" for="pubTags">Hashtags</label>
+          <input type="text" id="pubTags" maxlength="400">
+          <p class="hint">Rédigés en anglais par l'IA, modifiables. Envoyés tels quels à chaque réseau.</p>
+        </div>
+      </div>
+      <div>
+        <span class="lab">Où publier</span>
+        <div id="pubDest"><p class="hint">Chargement des comptes…</p></div>
+        <button class="btn btn-primary" type="button" id="pubGo" disabled>Choisis au moins un compte</button>
+        <ul class="pub-res" id="pubRes" aria-live="polite"></ul>
+      </div>
+    </div>
+  </dialog>
+
   <section id="etapes" class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Le pipeline</span>
@@ -542,14 +601,14 @@
           <li>Cadre qui suit le visage, écran partagé facecam et jeu pour les streams</li>
           <li>Sous-titres incrustés + pack titre/légende/hashtags</li>
           <li>Éditeur : cadre à la main, début et fin, format, titre, consigne à l'IA</li>
+          <li>Publication en un clic sur YouTube, Instagram et TikTok, textes en anglais</li>
         </ul>
       </div>
       <div class="box">
         <h3><span class="ic" style="background:var(--muted)"></span> La suite</h3>
         <ul>
           <li>Fonctionner même quand le PC qui récupère YouTube est éteint</li>
-          <li>Connexion d'un compte TikTok / Instagram</li>
-          <li>Publication assistée, validée à chaque fois</li>
+          <li>Publication TikTok en public, après validation de l'appli par TikTok</li>
           <li>Plusieurs styles de sous-titres</li>
         </ul>
       </div>
@@ -560,7 +619,7 @@
 <footer>
   <div class="wrap foot">
     <div class="logo"><span class="dot"></span>Clippeur maison</div>
-    <small>Projet personnel · propulsé par Whisper, un LLM et ffmpeg · <span id="y"></span></small>
+    <small>Projet personnel · <a href="/confidentialite.html">Confidentialité</a> · <a href="/conditions.html">Conditions</a> · <span id="y"></span></small>
   </div>
 </footer>
 
@@ -669,7 +728,7 @@
     $("studio").scrollIntoView({behavior:"smooth"});
   }
 
-  var curJob=null;
+  var curJob=null, connectMsg="";
   function follow(job){
     var t0=Date.now(); curJob=job;
     showStudio("Découpe en cours.","Le moteur transcrit, choisit les moments et rend chaque short. Compte 3 à 8 minutes.");
@@ -695,11 +754,16 @@
   function render(shorts){
     bar.style.width="100%"; go.disabled=false;
     $("stTitle").textContent=shorts.length+" short"+(shorts.length>1?"s":"")+" prêt"+(shorts.length>1?"s":"")+".";
-    $("stText").textContent="Regarde, télécharge, copie la légende.";
+    $("stText").textContent=connectMsg||"Regarde, télécharge, publie ou modifie.";
     var box=$("results"); box.textContent="";
     shorts.sort(function(a,b){return b.score-a.score}).forEach(function(s){
       var el=document.createElement("article"); el.className="res";
       el.innerHTML='<video controls playsinline preload="metadata"></video><div class="body"><h3></h3><div class="sc"></div><p></p><div class="hash"></div><div class="st" role="status"></div><div class="acts"><a class="btn btn-primary" download>Télécharger</a><button class="btn btn-ghost" type="button">Copier le texte</button></div></div>';
+      if(s.url){
+        var pb=document.createElement("button"); pb.type="button"; pb.className="btn btn-ghost"; pb.textContent="Publier";
+        pb.addEventListener("click",function(){ openPublish(s) });
+        el.querySelector(".acts").appendChild(pb);
+      }
       if(s.raw && s.n){
         var mod=document.createElement("button"); mod.type="button"; mod.className="btn btn-ghost"; mod.textContent="Modifier";
         mod.addEventListener("click",function(){ openEditor(s,el) });
@@ -945,6 +1009,107 @@
     if(Date.now()-t0>12*60000) return done("Le rendu prend trop de temps. Recharge la page plus tard.",true);
     setTimeout(function(){ pollEdit(me,out,t0) },5000);
   }
+
+  // ---- publication sur les réseaux ----
+  // Les jetons restent côté serveur (cookie chiffré) : ici on ne voit que noms et photos.
+  var pub=$("pub"), P=null;
+  var NETS=[
+    {p:"yt", name:"YouTube Shorts", api:"/api/youtube", add:"Ajouter une chaîne",
+      none:"Aucune chaîne connectée. Tu choisiras la chaîne sur l'écran Google, même si ton Gmail en a plusieurs."},
+    {p:"ig", name:"Instagram Reels", api:"/api/instagram", add:"Ajouter un compte",
+      none:"Aucun compte connecté. Il faut un compte professionnel (Créateur ou Entreprise)."},
+    {p:"tt", name:"TikTok", api:"/api/tiktok", add:"Ajouter un compte",
+      none:"Aucun compte connecté.", note:"Publié en « moi seul » tant que TikTok n'a pas validé l'appli : tu le passes en public depuis TikTok."}
+  ];
+  function fileOf(s){ return decodeURIComponent(s.url.split("/").pop()) }
+  function openPublish(s){
+    P={s:s, acc:null, busy:false};
+    $("pubTitle").value=s.title||""; $("pubCap").value=s.caption||""; $("pubTags").value=s.hashtags||"";
+    $("pubRes").textContent=""; countTitle();
+    pub.showModal(); loadAccounts();
+  }
+  $("pubX").addEventListener("click",function(){ pub.close() });
+  function countTitle(){ $("pubTitleN").textContent=$("pubTitle").value.length+" / 100" }
+  $("pubTitle").addEventListener("input",countTitle);
+
+  async function loadAccounts(){
+    try{ P.acc=await api("/api/accounts") }catch(err){ $("pubDest").innerHTML='<p class="note err"></p>'; $("pubDest").firstChild.textContent=err.message; return }
+    var box=$("pubDest"); box.textContent="";
+    NETS.forEach(function(n){
+      var d=P.acc[n.p]||{ready:false,accounts:[]}, el=document.createElement("div"); el.className="plat";
+      el.innerHTML='<div class="plat-h"><b></b></div>';
+      el.querySelector("b").textContent=n.name;
+      if(d.ready){
+        var a=document.createElement("a"); a.textContent="+ "+n.add;
+        a.href=n.api+"?connect=1"+(curJob?"&job="+curJob:"");
+        el.firstChild.appendChild(a);
+      }
+      d.accounts.forEach(function(c){
+        var row=document.createElement("label"); row.className="acc";
+        row.innerHTML='<input type="checkbox"><i class="ini"></i><span></span><button type="button">Retirer</button>';
+        var cb=row.querySelector("input"); cb.value=n.p+"|"+c.id; cb.addEventListener("change",goLabel);
+        row.querySelector("span").textContent=c.name;
+        row.querySelector(".ini").textContent=(c.name||"?").replace("@","").charAt(0).toUpperCase();
+        if(c.pic){ var im=new Image(); im.alt=""; im.referrerPolicy="no-referrer"; im.src=c.pic;
+          im.onload=function(){ row.querySelector(".ini").replaceWith(im) } }
+        row.querySelector("button").addEventListener("click",async function(e){
+          e.preventDefault();
+          await api("/api/accounts",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({p:n.p,id:c.id})}).catch(function(){});
+          loadAccounts();
+        });
+        el.appendChild(row);
+      });
+      var h=document.createElement("p"); h.className="hint";
+      h.textContent=!d.ready?"Pas encore branché : les clés de l'appli "+n.name.split(" ")[0]+" ne sont pas installées."
+        :!d.accounts.length?n.none:(n.note||"");
+      if(h.textContent) el.appendChild(h);
+      box.appendChild(el);
+    });
+    goLabel();
+  }
+  function picked(){ return [].slice.call(pub.querySelectorAll(".acc input:checked")) }
+  function goLabel(){
+    var k=picked().length;
+    $("pubGo").disabled=!k||P.busy;
+    $("pubGo").textContent=P.busy?"Publication en cours…":k?"Publier sur "+k+" compte"+(k>1?"s":""):"Choisis au moins un compte";
+  }
+
+  $("pubGo").addEventListener("click",async function(){
+    var me=P, list=picked(), body={job:curJob, file:fileOf(me.s), title:$("pubTitle").value.trim(),
+      caption:$("pubCap").value.trim(), hashtags:$("pubTags").value.trim()};
+    if(!body.title){ $("pubTitle").focus(); return }
+    me.busy=true; goLabel(); $("pubRes").textContent="";
+    for(var i=0;i<list.length;i++){
+      var v=list[i].value.split("|"), net=NETS.filter(function(n){return n.p===v[0]})[0],
+        who=list[i].closest(".acc").querySelector("span").textContent;
+      var li=document.createElement("li"), b=document.createElement("b"), t=document.createElement("span");
+      b.textContent=net.name.split(" ")[0]+" · "+who; t.textContent="envoi…"; li.append(b,t); $("pubRes").appendChild(li);
+      try{
+        var d=await api(net.api,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(Object.assign({account:v[1]},body))});
+        for(var n=0; d.check && n<45; n++){ // Instagram traite la vidéo avant de la publier
+          t.textContent="traitement par Instagram…";
+          await new Promise(function(r){ setTimeout(r,4000) });
+          d=Object.assign({check:d.check},await api(net.api+"?check="+d.check+"&account="+encodeURIComponent(v[1])));
+          if(d.state==="done") delete d.check;
+        }
+        if(d.check) throw new Error("Instagram met trop de temps, regarde sur ton compte dans quelques minutes.");
+        li.className="ok"; t.textContent=d.private?"envoyé en privé ":"publié ";
+        if(d.url){ var a=document.createElement("a"); a.href=d.url; a.target="_blank"; a.rel="noopener"; a.textContent="voir"; t.appendChild(a) }
+      }catch(err){ li.className="err"; t.textContent=err.message }
+    }
+    me.busy=false; goLabel();
+  });
+
+  // retour d'une connexion (YouTube, Instagram, TikTok)
+  (function(){
+    var c=new URLSearchParams(location.search).get("connect"); if(!c) return;
+    var net={yt:"YouTube",ig:"Instagram",tt:"TikTok"}[c.split("-")[0]], r=c.split("-").slice(1).join("-");
+    var t=!net?"":r==="ok"?"Compte "+net+" connecté. Clique sur « Publier » sous un short.":
+      r==="annule"?"Connexion "+net+" annulée.":r==="sans-chaine"?"Ce compte Google n'a pas de chaîne YouTube.":"La connexion "+net+" a échoué, réessaie.";
+    if(t){ say(t,r!=="ok"); connectMsg=t }
+    var q=new URLSearchParams(location.search); q.delete("connect");
+    history.replaceState(null,"",location.pathname+(q.toString()?"?"+q:""));
+  })();
 
   var j=new URLSearchParams(location.search).get("job");
   if(j && /^[a-f0-9]{16}$/.test(j)) follow(j);
