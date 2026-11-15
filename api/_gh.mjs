@@ -74,3 +74,32 @@ export function canonUrl(url) {
   }
   return null;
 }
+
+// Reglages d'un short envoyes par l'editeur. Le moteur les revalide (parse_spec).
+const rect = (r) => {
+  if (!r || typeof r !== "object") return null;
+  const o = {};
+  for (const k of ["x", "y", "w", "h"]) {
+    const v = Number(r[k]);
+    if (!Number.isFinite(v) || v < (k === "w" || k === "h" ? 0.02 : 0) || v > 1) return null;
+    o[k] = Math.round(v * 1e4) / 1e4;
+  }
+  return o;
+};
+export function cleanSpec(s) {
+  s = s && typeof s === "object" ? s : {};
+  const a = Number(s.trim?.[0]), b = Number(s.trim?.[1]);
+  if (!(a >= 0 && b > a && b <= 600)) return { error: "Début et fin du short invalides." };
+  return {
+    spec: {
+      format: FORMATS.includes(s.format) ? s.format : "9:16",
+      layout: s.layout === "split" ? "split" : "full",
+      crop: rect(s.crop), cam: rect(s.cam), game: rect(s.game),
+      track: s.track === true,
+      trim: [Math.round(a * 100) / 100, Math.round(b * 100) / 100],
+      cut: s.cut !== false, subs: s.subs !== false,
+      title: String(s.title || "").replace(/\s+/g, " ").trim().slice(0, 100),
+      ask: String(s.ask || "").replace(/\s+/g, " ").trim().slice(0, 300),
+    },
+  };
+}

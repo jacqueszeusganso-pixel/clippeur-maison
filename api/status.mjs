@@ -1,6 +1,8 @@
 // Etat d'un travail : en cours, termine (avec les shorts) ou en echec
 import { json, findRelease } from "./_gh.mjs";
 
+const EDIT_RE = /^edit_0([1-6])_([a-f0-9]{8})\.mp4$/;
+
 export async function GET(req) {
   const rel = await findRelease(new URL(req.url).searchParams.get("job"));
   if (!rel) return json({ state: "unknown", error: "Travail introuvable." }, 404);
@@ -13,11 +15,26 @@ export async function GET(req) {
 
   const meta = await fetch(assets["shorts.json"]).then((r) => r.json()).catch(() => null);
   if (!Array.isArray(meta)) return json({ state: "error" });
-  const shorts = meta.map((m) => ({
-    title: String(m.title || ""), score: Number(m.score) || 0,
-    caption: String(m.caption || ""), hashtags: String(m.hashtags || ""),
-    start: Number(m.start) || 0, end: Number(m.end) || 0,
-    url: assets[m.file] || null,
+
+  // derniere version editee de chaque short, pour la retrouver en revenant sur la page
+  const last = {};
+  for (const a of rel.assets) {
+    const m = EDIT_RE.exec(a.name);
+    if (m && assets[a.name.replace(/\.mp4$/, ".json")] && (!last[m[1]] || a.created_at > last[m[1]].created_at))
+      last[m[1]] = a;
+  }
+  const shorts = await Promise.all(meta.map(async (m) => {
+    const n = Number(/^raw_0([1-6])\.mp4$/.exec(m.raw || "")?.[1]) || null;
+    const ed = n && last[n];
+    const edSpec = ed ? await fetch(assets[ed.name.replace(/\.mp4$/, ".json")]).then((r) => r.json()).catch(() => null) : null;
+    return {
+      title: String(m.title || ""), score: Number(m.score) || 0,
+      caption: String(m.caption || ""), hashtags: String(m.hashtags || ""),
+      start: Number(m.start) || 0, end: Number(m.end) || 0,
+      url: (ed && edSpec ? ed.browser_download_url : assets[m.file]) || null,
+      n, raw: n ? assets[m.raw] || null : null, dur: Number(m.dur) || 0,
+      spec: (ed && edSpec) || m.spec || null,
+    };
   }));
   return json({ state: "done", shorts });
 }

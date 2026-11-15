@@ -140,6 +140,74 @@
   .res .hash{color:var(--accent);font-size:.9rem;font-weight:600}
   .res .acts{display:flex;gap:8px;margin-top:auto;padding-top:6px;flex-wrap:wrap}
   .res .acts .btn{padding:9px 14px;font-size:14px}
+  .res .st{color:var(--accent);font-size:13px;font-weight:600}
+  .res .st:empty{display:none}
+  .btn:active{transform:scale(.97)}
+
+  /* ---- éditeur d'un short ---- */
+  .ed{border:1px solid var(--line);border-radius:18px;background:var(--bg-2);color:var(--ink);
+    width:min(1120px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 32px);margin:auto;padding:0;
+    overflow:auto;opacity:1;transform:none;
+    transition:opacity .2s var(--ease),transform .2s var(--ease),display .2s allow-discrete,overlay .2s allow-discrete}
+  .ed:not([open]){opacity:0;transform:scale(.97)}
+  @starting-style{.ed[open]{opacity:0;transform:scale(.97)}}
+  .ed::backdrop{background:rgba(5,5,6,.78)}
+  .ed-head{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 20px;
+    border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg-2);z-index:5}
+  .ed-head h3{font-family:"Bricolage Grotesque";font-weight:700;font-size:1.15rem;letter-spacing:-.01em}
+  .ed-x{flex:none;background:none;border:1px solid var(--line);color:var(--ink);width:38px;height:38px;
+    border-radius:50%;cursor:pointer;font-size:20px;line-height:1;transition:border-color .2s}
+  .ed-x:hover{border-color:var(--ink)}
+  .ed-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;padding:22px}
+  .src{position:relative;background:#000;border-radius:10px;overflow:hidden;margin:0 auto;aspect-ratio:16/9;width:100%}
+  .src video{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .src,.trim{user-select:none;-webkit-user-select:none}
+  .box{position:absolute;border:2px solid var(--accent);cursor:move;touch-action:none;outline:none}
+  .box.solo{box-shadow:0 0 0 100vmax rgba(10,10,11,.55)}
+  .box.track{border-style:dashed}
+  .box.alt{border-color:var(--ink)}
+  .box:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  .box span{position:absolute;top:0;left:0;background:var(--accent);color:var(--accent-ink);font-size:11px;
+    font-weight:700;padding:2px 7px;text-transform:uppercase;letter-spacing:.06em;pointer-events:none;white-space:nowrap}
+  .box.alt span{background:var(--ink)}
+  .box i{position:absolute;right:-8px;bottom:-8px;width:16px;height:16px;background:var(--ink);
+    border:2px solid var(--accent);border-radius:4px;cursor:nwse-resize}
+  .box i::after{content:"";position:absolute;inset:-12px}
+  .box[hidden]{display:none}
+  .transport{display:flex;align-items:center;gap:14px;margin-top:14px}
+  .transport .btn{padding:8px 16px;font-size:14px}
+  .tc{color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+  .trim{position:relative;height:44px;margin-top:12px;touch-action:none;cursor:pointer}
+  .trim::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;
+    background:var(--line);border-radius:3px}
+  .trim .sel{position:absolute;top:50%;height:6px;margin-top:-3px;background:var(--accent);border-radius:3px}
+  .trim .ph{position:absolute;top:8px;bottom:8px;width:2px;margin-left:-1px;background:var(--ink);pointer-events:none}
+  .trim .h{position:absolute;top:6px;width:16px;height:32px;margin-left:-8px;border-radius:6px;
+    background:var(--ink);border:2px solid var(--accent);cursor:ew-resize;touch-action:none;padding:0}
+  .trim .h:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .side{display:flex;flex-direction:column;gap:18px;min-width:0}
+  .phone canvas{display:block;width:100%;max-width:230px;margin:0 auto;border-radius:14px;background:#000;
+    border:1px solid var(--line)}
+  .ed .lab{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+    font-weight:600;margin-bottom:8px}
+  .ed .hint{color:#6d6b64;font-size:12.5px;margin-top:8px;line-height:1.45}
+  .ed .seg input{position:absolute;opacity:0;width:1px;height:1px}
+  .seg input:disabled+span{opacity:.35;cursor:not-allowed}
+  .ed .checks{gap:10px 18px}
+  .ed .checks input{width:17px;height:17px;accent-color:var(--accent)}
+  .ed .checks label:has(input:disabled){opacity:.4;cursor:not-allowed}
+  .ed input[type=text],.ed textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;resize:vertical}
+  .ed input[type=text]:focus,.ed textarea:focus{outline:none;border-color:var(--accent)}
+  .ed textarea::placeholder,.ed input::placeholder{color:#6d6b64}
+  #edGo{justify-content:center}
+  #edGo:disabled{opacity:.5;cursor:wait;transform:none}
+  .ed .note{margin-top:0}
+  @media(max-width:860px){
+    .ed{width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
+    .ed-grid{grid-template-columns:1fr;gap:22px;padding:16px}
+    .phone canvas{max-width:180px}
+  }
 
   /* ---- short card (objet héros + démo) ---- */
   .stage{display:flex;justify-content:center;perspective:1200px}
@@ -352,6 +420,72 @@
     <div class="results" id="results"></div>
   </section>
 
+  <dialog class="ed" id="ed" aria-labelledby="edH">
+    <div class="ed-head">
+      <h3 id="edH">Modifier le short</h3>
+      <button class="ed-x" type="button" id="edX" aria-label="Fermer l'éditeur">×</button>
+    </div>
+    <div class="ed-grid">
+      <div>
+        <div class="src" id="edSrc">
+          <video id="edVideo" playsinline preload="auto"></video>
+          <div class="box solo" id="bx-crop" tabindex="0" aria-label="Cadre du short : flèches pour déplacer, Maj et flèches pour la taille"><span>Cadre</span><i></i></div>
+          <div class="box" id="bx-cam" tabindex="0" aria-label="Zone de la facecam : flèches pour déplacer, Maj et flèches pour la taille"><span>Facecam</span><i></i></div>
+          <div class="box alt" id="bx-game" tabindex="0" aria-label="Zone du jeu : flèches pour déplacer, Maj et flèches pour la taille"><span>Jeu</span><i></i></div>
+        </div>
+        <div class="transport">
+          <button class="btn btn-ghost" type="button" id="edPlay">Lecture</button>
+          <span class="tc" id="edTc">0:00</span>
+        </div>
+        <div class="trim" id="trim">
+          <div class="sel" id="trSel"></div>
+          <div class="ph" id="trPh"></div>
+          <button class="h" type="button" id="trA" aria-label="Début du short : flèches pour ajuster"></button>
+          <button class="h" type="button" id="trB" aria-label="Fin du short : flèches pour ajuster"></button>
+        </div>
+        <p class="hint">Les poignées orange fixent le début et la fin. Fais glisser le cadre pour le déplacer, tire son coin pour zoomer.</p>
+      </div>
+      <div class="side">
+        <div class="phone">
+          <canvas id="edCanvas" width="270" height="480" role="img" aria-label="Aperçu du short"></canvas>
+          <p class="hint" style="text-align:center">Aperçu en direct. Les sous-titres exacts sont posés au rendu.</p>
+        </div>
+        <div>
+          <span class="lab" id="edFmtLab">Format</span>
+          <div class="seg" role="radiogroup" aria-labelledby="edFmtLab">
+            <label><input type="radio" name="edFormat" value="9:16"><span>9:16</span></label>
+            <label><input type="radio" name="edFormat" value="4:5"><span>4:5</span></label>
+            <label><input type="radio" name="edFormat" value="1:1"><span>1:1</span></label>
+            <label><input type="radio" name="edFormat" value="16:9"><span>16:9</span></label>
+          </div>
+        </div>
+        <div>
+          <span class="lab" id="edLayLab">Mise en page</span>
+          <div class="seg" role="radiogroup" aria-labelledby="edLayLab">
+            <label><input type="radio" name="edLayout" value="full"><span>Plein cadre</span></label>
+            <label><input type="radio" name="edLayout" value="split"><span>Écran partagé</span></label>
+          </div>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="edTrack"> Suivre le visage</label>
+          <label><input type="checkbox" id="edCut"> Couper les blancs</label>
+          <label><input type="checkbox" id="edSubs"> Sous-titres</label>
+        </div>
+        <div>
+          <label class="lab" for="edTitle">Titre incrusté</label>
+          <input type="text" id="edTitle" maxlength="100" placeholder="Vide : pas de titre">
+        </div>
+        <div>
+          <label class="lab" for="edAsk">Demander à l'IA (facultatif)</label>
+          <textarea id="edAsk" rows="2" maxlength="300" placeholder="ex. commence 2 secondes plus tard et raccourcis le titre"></textarea>
+          <p class="hint">Appliqué en plus de tes réglages : coupe, titre, format, blancs, sous-titres.</p>
+        </div>
+        <button class="btn btn-primary" type="button" id="edGo">Rendre cette version</button>
+        <p class="note" id="edMsg" role="status"></p>
+      </div>
+    </div>
+  </dialog>
+
   <section id="etapes" class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Le pipeline</span>
@@ -407,6 +541,7 @@
           <li>Choix des moments, titre et score par IA</li>
           <li>Cadre qui suit le visage, écran partagé facecam et jeu pour les streams</li>
           <li>Sous-titres incrustés + pack titre/légende/hashtags</li>
+          <li>Éditeur : cadre à la main, début et fin, format, titre, consigne à l'IA</li>
         </ul>
       </div>
       <div class="box">
@@ -534,8 +669,9 @@
     $("studio").scrollIntoView({behavior:"smooth"});
   }
 
+  var curJob=null;
   function follow(job){
-    var t0=Date.now();
+    var t0=Date.now(); curJob=job;
     showStudio("Découpe en cours.","Le moteur transcrit, choisit les moments et rend chaque short. Compte 3 à 8 minutes.");
     bar.style.width="0";
     (async function tick(){
@@ -563,7 +699,12 @@
     var box=$("results"); box.textContent="";
     shorts.sort(function(a,b){return b.score-a.score}).forEach(function(s){
       var el=document.createElement("article"); el.className="res";
-      el.innerHTML='<video controls playsinline preload="metadata"></video><div class="body"><h3></h3><div class="sc"></div><p></p><div class="hash"></div><div class="acts"><a class="btn btn-primary" download>Télécharger</a><button class="btn btn-ghost" type="button">Copier le texte</button></div></div>';
+      el.innerHTML='<video controls playsinline preload="metadata"></video><div class="body"><h3></h3><div class="sc"></div><p></p><div class="hash"></div><div class="st" role="status"></div><div class="acts"><a class="btn btn-primary" download>Télécharger</a><button class="btn btn-ghost" type="button">Copier le texte</button></div></div>';
+      if(s.raw && s.n){
+        var mod=document.createElement("button"); mod.type="button"; mod.className="btn btn-ghost"; mod.textContent="Modifier";
+        mod.addEventListener("click",function(){ openEditor(s,el) });
+        el.querySelector(".acts").appendChild(mod);
+      }
       el.querySelector("video").src=s.url;
       el.querySelector("h3").textContent=s.title;
       el.querySelector(".sc").textContent=s.score+" / 100";
@@ -575,6 +716,234 @@
       });
       box.appendChild(el);
     });
+  }
+
+  // ---- éditeur d'un short ----
+  // Les cadres sont en coordonnées normalisées (0 à 1) de l'extrait brut, comme côté moteur.
+  var ed=$("ed"), ev=$("edVideo"), cv=$("edCanvas"), ctx=cv.getContext("2d"), E=null, drag=null;
+  var FMT={"9:16":[1080,1920],"4:5":[1080,1350],"1:1":[1080,1080],"16:9":[1920,1080]};
+  function clamp(v,a,b){ return Math.min(Math.max(v,a),b) }
+  function splitH(H){ var ht=Math.floor(H*0.4/2)*2; return [ht,H-ht] } // même découpe que le moteur
+  function ratioOf(k){ var f=FMT[E.spec.format], sh=splitH(f[1]); return f[0]/(k==="crop"?f[1]:k==="cam"?sh[0]:sh[1]) }
+  function fit(r,ratio){ // garde le centre, impose le ratio du panneau, reste dans l'image
+    r=r||{x:.25,y:.25,w:.5,h:.5};
+    var A=E.iw/E.ih, mx=r.x+r.w/2, my=r.y+r.h/2, w=clamp(r.w,.05,1), h=w*A/ratio;
+    if(h>1){ h=1; w=ratio/A }
+    return {x:clamp(mx-w/2,0,1-w), y:clamp(my-h/2,0,1-h), w:w, h:h};
+  }
+  function canSplit(){ return (E.spec.format==="9:16"||E.spec.format==="4:5") && E.iw>E.ih }
+  function split(){ return E.spec.layout==="split" && canSplit() }
+  function mmss(t){ var m=Math.floor(t/60), s=t-m*60; return m+":"+(s<10?"0":"")+s.toFixed(1) }
+  function edSay(t,err){ $("edMsg").textContent=t; $("edMsg").classList.toggle("err",!!err) }
+  function radio(name,v){ ed.querySelectorAll("input[name="+name+"]").forEach(function(i){ i.checked=i.value===v }) }
+
+  function loadSpec(sp){
+    sp=sp||{};
+    E.spec={format:FMT[sp.format]?sp.format:"9:16", layout:sp.layout==="split"?"split":"full",
+      crop:sp.crop, cam:sp.cam, game:sp.game, track:!!sp.track,
+      trim:(sp.trim&&sp.trim.length===2?sp.trim:[0,E.dur]).slice(), cut:sp.cut!==false, subs:sp.subs!==false};
+    radio("edFormat",E.spec.format); radio("edLayout",E.spec.layout);
+    $("edTitle").value=sp.title||""; $("edAsk").value="";
+    $("edCut").checked=E.spec.cut; $("edSubs").checked=E.spec.subs; $("edTrack").checked=E.spec.track;
+    if(E.iw) refresh();
+  }
+  function refresh(){ // ratios, cases et cadres après un changement de format ou de mise en page
+    var f=FMT[E.spec.format];
+    ["crop","cam","game"].forEach(function(k){ E.spec[k]=fit(E.spec[k],ratioOf(k)) });
+    ed.querySelector("input[name=edLayout][value=split]").disabled=!canSplit();
+    if(!canSplit()){ E.spec.layout="full"; radio("edLayout","full") }
+    $("edTrack").disabled=split();
+    cv.width=f[0]/4; cv.height=f[1]/4;
+    boxes(); trimUI();
+  }
+  function boxes(){
+    var sp=split();
+    $("bx-crop").hidden=sp; $("bx-cam").hidden=!sp; $("bx-game").hidden=!sp;
+    $("bx-crop").classList.toggle("track",E.spec.track);
+    ["crop","cam","game"].forEach(function(k){
+      var r=E.spec[k], s=$("bx-"+k).style;
+      s.left=r.x*100+"%"; s.top=r.y*100+"%"; s.width=r.w*100+"%"; s.height=r.h*100+"%";
+    });
+  }
+  function setTrack(v){ E.spec.track=v; $("edTrack").checked=v; boxes() }
+
+  function openEditor(s,card){
+    E={s:s, card:card, iw:0, ih:0, dur:s.dur||0};
+    loadSpec(s.spec);
+    edSay(s.busy?"Une version de ce short est déjà en cours de rendu.":"");
+    $("edGo").disabled=!!s.busy;
+    $("edPlay").textContent="Lecture";
+    ev.src=s.raw;
+    ed.showModal();
+    requestAnimationFrame(draw);
+  }
+  ev.addEventListener("loadedmetadata",function(){
+    E.iw=ev.videoWidth; E.ih=ev.videoHeight; if(!E.dur) E.dur=ev.duration;
+    if(!(E.spec.trim[1]>E.spec.trim[0])) E.spec.trim=[0,E.dur];
+    var src=$("edSrc"); src.style.aspectRatio=E.iw+"/"+E.ih;
+    src.style.width="min(100%, "+(56*E.iw/E.ih).toFixed(2)+"dvh)";
+    ev.currentTime=E.spec.trim[0];
+    refresh();
+  });
+  $("edX").addEventListener("click",function(){ ed.close() });
+  ed.addEventListener("close",function(){ ev.pause(); drag=null });
+
+  ed.querySelectorAll("input[name=edFormat]").forEach(function(i){
+    i.addEventListener("change",function(){ E.spec.format=i.value; refresh() });
+  });
+  ed.querySelectorAll("input[name=edLayout]").forEach(function(i){
+    i.addEventListener("change",function(){ E.spec.layout=i.value; refresh() });
+  });
+  $("edTrack").addEventListener("change",function(){ setTrack(this.checked) });
+  $("edCut").addEventListener("change",function(){ E.spec.cut=this.checked });
+  $("edSubs").addEventListener("change",function(){ E.spec.subs=this.checked });
+
+  // cadres : glisser pour déplacer, coin pour redimensionner (ratio gardé), clavier en secours
+  ["crop","cam","game"].forEach(function(k){
+    var el=$("bx-"+k);
+    el.addEventListener("pointerdown",function(e){
+      if(drag||!E.iw) return; // un seul doigt à la fois
+      e.preventDefault(); el.focus(); el.setPointerCapture(e.pointerId);
+      var rc=$("edSrc").getBoundingClientRect(), r=E.spec[k];
+      drag={k:k, id:e.pointerId, resize:e.target.tagName==="I", x0:e.clientX, y0:e.clientY,
+        r:{x:r.x,y:r.y,w:r.w,h:r.h}, W:rc.width, H:rc.height};
+    });
+    el.addEventListener("pointermove",function(e){
+      if(!drag||drag.id!==e.pointerId||drag.k!==k) return;
+      var dx=(e.clientX-drag.x0)/drag.W, dy=(e.clientY-drag.y0)/drag.H, r=drag.r, ratio=ratioOf(k), A=E.iw/E.ih;
+      if(k==="crop"&&E.spec.track&&Math.abs(dx)+Math.abs(dy)>.005) setTrack(false);
+      if(drag.resize){
+        var w=Math.max(r.w+dx,(r.h+dy)*ratio/A);
+        w=clamp(w,.05,Math.min(1-r.x,(1-r.y)*ratio/A));
+        E.spec[k]={x:r.x, y:r.y, w:w, h:w*A/ratio};
+      } else E.spec[k]={x:clamp(r.x+dx,0,1-r.w), y:clamp(r.y+dy,0,1-r.h), w:r.w, h:r.h};
+      boxes();
+    });
+    ["pointerup","pointercancel"].forEach(function(t){ el.addEventListener(t,function(e){ if(drag&&drag.id===e.pointerId) drag=null }) });
+    el.addEventListener("keydown",function(e){
+      var d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
+      if(!d) return;
+      e.preventDefault();
+      var r=E.spec[k], st=.01;
+      if(k==="crop") setTrack(false);
+      if(e.shiftKey){ var g=(d[0]||-d[1])*st; r={x:r.x-g/2, y:r.y, w:r.w+g, h:r.h} }
+      else r={x:r.x+d[0]*st, y:r.y+d[1]*st, w:r.w, h:r.h};
+      E.spec[k]=fit(r,ratioOf(k)); boxes();
+    });
+  });
+
+  // coupe : deux poignées, clic sur la barre pour se placer
+  function trimUI(){
+    var a=E.spec.trim[0], b=E.spec.trim[1], D=E.dur||1;
+    $("trA").style.left=a/D*100+"%"; $("trB").style.left=b/D*100+"%";
+    $("trSel").style.left=a/D*100+"%"; $("trSel").style.width=(b-a)/D*100+"%";
+    $("edTc").textContent=mmss(a)+" → "+mmss(b)+" · "+(b-a).toFixed(1).replace(".",",")+" s";
+  }
+  function setTrim(i,v){
+    var t=E.spec.trim;
+    t[i]=i===0?clamp(v,0,t[1]-1):clamp(v,t[0]+1,E.dur);
+    trimUI(); if(ev.paused) ev.currentTime=i===0?t[0]:Math.max(t[0],t[1]-.5);
+  }
+  function trimAt(e){ var rc=$("trim").getBoundingClientRect(); return clamp((e.clientX-rc.left)/rc.width,0,1)*E.dur }
+  var tdrag=null;
+  [$("trA"),$("trB")].forEach(function(h,i){
+    h.addEventListener("pointerdown",function(e){
+      if(tdrag||!E.dur) return;
+      e.preventDefault(); e.stopPropagation(); h.focus(); h.setPointerCapture(e.pointerId); tdrag={i:i,id:e.pointerId};
+    });
+    h.addEventListener("pointermove",function(e){ if(tdrag&&tdrag.id===e.pointerId) setTrim(tdrag.i,trimAt(e)) });
+    ["pointerup","pointercancel"].forEach(function(t){ h.addEventListener(t,function(){ tdrag=null }) });
+    h.addEventListener("keydown",function(e){
+      var d={ArrowLeft:-1,ArrowDown:-1,ArrowRight:1,ArrowUp:1}[e.key];
+      if(!d) return;
+      e.preventDefault(); setTrim(i,E.spec.trim[i]+d*(e.shiftKey?1:.1));
+    });
+  });
+  $("trim").addEventListener("pointerdown",function(e){
+    if(e.target!==this&&e.target.id!=="trSel") return;
+    ev.currentTime=clamp(trimAt(e),E.spec.trim[0],E.spec.trim[1]);
+  });
+
+  $("edPlay").addEventListener("click",function(){
+    var t=E.spec.trim;
+    if(ev.paused){ if(ev.currentTime<t[0]||ev.currentTime>=t[1]-.05) ev.currentTime=t[0]; ev.play() }
+    else ev.pause();
+  });
+  ev.addEventListener("play",function(){ $("edPlay").textContent="Pause" });
+  ev.addEventListener("pause",function(){ $("edPlay").textContent="Lecture" });
+
+  // aperçu téléphone : on peint les zones choisies de l'extrait, le titre et la place des sous-titres
+  function blit(r,dx,dy,dw,dh){ ctx.drawImage(ev,r.x*E.iw,r.y*E.ih,r.w*E.iw,r.h*E.ih,dx,dy,dw,dh) }
+  function lines(text,max){
+    var out=[], cur="";
+    text.toUpperCase().split(/\s+/).forEach(function(w){
+      var t=cur?cur+" "+w:w;
+      if(ctx.measureText(t).width>max&&cur){ out.push(cur); cur=w } else cur=t;
+    });
+    if(cur) out.push(cur);
+    return out.slice(0,3);
+  }
+  function draw(){
+    if(!ed.open||!E) return;
+    var W=cv.width, H=cv.height, t=E.spec.trim, sp=split(), ht=0;
+    if(!ev.paused&&ev.currentTime>=t[1]) ev.currentTime=t[0]; // lecture en boucle sur la coupe
+    ctx.fillStyle="#000"; ctx.fillRect(0,0,W,H);
+    if(E.iw&&ev.readyState>=2){
+      if(sp){ ht=Math.round(H*splitH(FMT[E.spec.format][1])[0]/FMT[E.spec.format][1]); blit(E.spec.cam,0,0,W,ht); blit(E.spec.game,0,ht,W,H-ht) }
+      else blit(E.spec.crop,0,0,W,H);
+    }
+    var title=$("edTitle").value.trim(), fs=Math.round(W*.065);
+    ctx.textAlign="center"; ctx.textBaseline="middle";
+    if(title){
+      ctx.font="800 "+fs+"px 'Bricolage Grotesque', sans-serif";
+      lines(title,W*.82).forEach(function(l,i){
+        var y=H*.09+i*fs*1.25, w=ctx.measureText(l).width+fs*.7;
+        ctx.fillStyle="#FF4322"; ctx.fillRect(W/2-w/2,y-fs*.62,w,fs*1.24);
+        ctx.fillStyle="#0A0A0B"; ctx.fillText(l,W/2,y);
+      });
+    }
+    if(E.spec.subs){
+      var y=sp?ht:H*.7, f2=Math.round(W*.08);
+      ctx.font="800 "+f2+"px 'Bricolage Grotesque', sans-serif";
+      ctx.lineWidth=f2*.18; ctx.strokeStyle="#000"; ctx.lineJoin="round";
+      ctx.globalAlpha=.75; ctx.strokeText("SOUS-TITRES",W/2,y); ctx.fillStyle="#fff"; ctx.fillText("SOUS-TITRES",W/2,y); ctx.globalAlpha=1;
+    }
+    if(E.dur) $("trPh").style.left=clamp(ev.currentTime/E.dur,0,1)*100+"%";
+    requestAnimationFrame(draw);
+  }
+
+  // rendu : le moteur refait le short sur GitHub, on vérifie toutes les 5 s
+  $("edGo").addEventListener("click",async function(){
+    var me=E, sp=Object.assign({},E.spec,{title:$("edTitle").value.trim(), ask:$("edAsk").value.trim(),
+      track:E.spec.track&&!split()});
+    sp.trim=[Math.round(sp.trim[0]*100)/100, Math.round(sp.trim[1]*100)/100];
+    this.disabled=true; edSay("Envoi…");
+    try{
+      var d=await api("/api/edit",{method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({job:curJob, clip:me.s.n, spec:sp})});
+      me.s.busy=true;
+      me.card.querySelector(".st").textContent="Nouvelle version en cours de rendu…";
+      edSay("Rendu lancé. Compte 1 à 3 minutes. Tu peux fermer cette fenêtre, la carte se mettra à jour.");
+      pollEdit(me,d.out,Date.now());
+    }catch(err){ edSay(err.message,true); this.disabled=false }
+  });
+  async function pollEdit(me,out,t0){
+    var st=me.card.querySelector(".st"), done=function(t,err){
+      me.s.busy=false; st.textContent=t;
+      if(E===me&&ed.open){ edSay(t,err); $("edGo").disabled=false }
+    };
+    try{
+      var d=await api("/api/edit?job="+curJob+"&clip="+me.s.n+"&out="+out);
+      if(d.state==="done"){
+        me.s.url=d.url; if(d.spec) me.s.spec=d.spec;
+        me.card.querySelector("video").src=d.url; me.card.querySelector("a").href=d.url;
+        if(E===me&&ed.open) loadSpec(me.s.spec);
+        return done("Nouvelle version prête.");
+      }
+      if(d.state==="error") return done("Le rendu de cette version a échoué. Réessaie avec d'autres réglages.",true);
+    }catch(err){ /* coupure réseau : on retente au prochain passage */ }
+    if(Date.now()-t0>12*60000) return done("Le rendu prend trop de temps. Recharge la page plus tard.",true);
+    setTimeout(function(){ pollEdit(me,out,t0) },5000);
   }
 
   var j=new URLSearchParams(location.search).get("job");
