@@ -680,7 +680,7 @@
       try{
         var d=await api("/api/status?job="+job);
         if(d.state==="done") return render(d.shorts);
-        if(d.state==="waiting"){ $("stTitle").textContent="En attente du moteur."; $("stText").textContent="Le PC qui récupère les vidéos en ligne est éteint ou en veille. Le travail démarrera dès qu'il sera allumé."; t0=Date.now() }
+        if(d.state==="waiting"){ $("stTitle").textContent="En attente du moteur."; $("stText").textContent="Le PC qui récupère les vidéos en ligne est occupé par une autre vidéo, éteint ou en veille. Le travail démarre dès qu'il est libre."; t0=Date.now() }
         else if(d.state==="fetching"){ $("stTitle").textContent="Récupération de la vidéo."; $("stText").textContent="La vidéo est en cours de téléchargement, la découpe suit juste après."; t0=Date.now() }
         else { $("stTitle").textContent="Découpe en cours."; $("stText").textContent="Le moteur transcrit, choisit les moments et rend chaque short. Compte 3 à 8 minutes." }
         if(d.state==="error") return fail("Le moteur a échoué sur cette vidéo. Essaie une vidéo avec de la parole, ou plus courte.");
