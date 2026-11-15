@@ -283,6 +283,15 @@
                 <label><input type="radio" name="format" value="16:9"><span>16:9</span></label>
               </div>
             </div>
+            <div>
+              <span class="lab" id="layLab">Mise en page</span>
+              <div class="seg" role="radiogroup" aria-labelledby="layLab">
+                <label><input type="radio" name="layout" value="auto" checked><span>Auto</span></label>
+                <label><input type="radio" name="layout" value="full"><span>Plein cadre</span></label>
+                <label><input type="radio" name="layout" value="split"><span>Écran partagé</span></label>
+              </div>
+              <p class="hint">Auto : facecam en haut et jeu en bas quand une facecam est repérée dans un coin, sinon plein cadre qui suit le visage. En 9:16 et 4:5.</p>
+            </div>
             <div class="checks">
               <label><input type="checkbox" id="cut" checked> Couper les blancs</label>
               <label><input type="checkbox" id="title" checked> Titre incrusté</label>
@@ -396,7 +405,7 @@
           <li>Partie du live au choix, recherche d'un moment précis</li>
           <li>Blancs coupés, titre incrusté, 4 formats</li>
           <li>Choix des moments, titre et score par IA</li>
-          <li>Recadrage sur le visage (OpenCV), pas au centre bêtement</li>
+          <li>Cadre qui suit le visage, écran partagé facecam et jeu pour les streams</li>
           <li>Sous-titres incrustés + pack titre/légende/hashtags</li>
         </ul>
       </div>
@@ -446,7 +455,8 @@
     return v.split(":").reduce(function(a,p){return a*60+Number(p)},0);
   }
   function readOpts(){
-    var o={format:form.querySelector("input[name=format]:checked").value, cat:$("cat").value,
+    var o={format:form.querySelector("input[name=format]:checked").value,
+      layout:form.querySelector("input[name=layout]:checked").value, cat:$("cat").value,
       cut:$("cut").checked, title:$("title").checked, find:$("find").value.trim()};
     var a=secs($("from").value), b=secs($("to").value);
     if(a===null && b===null) return o;
@@ -457,7 +467,9 @@
     o.start=a; o.end=b; return o;
   }
   function sumOpts(){
-    var f=form.querySelector("input[name=format]:checked").value, p=[f];
+    var f=form.querySelector("input[name=format]:checked").value, p=[f],
+      l=form.querySelector("input[name=layout]:checked").value;
+    if(l!=="auto") p.push(l==="split"?"écran partagé":"plein cadre");
     p.push($("cut").checked?"blancs coupés":"blancs gardés");
     if($("title").checked) p.push("titre");
     if($("find").value.trim()) p.push("moment précis");

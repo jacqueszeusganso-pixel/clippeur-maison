@@ -39,11 +39,13 @@ export async function findRelease(job) {
 // Reglages envoyes par le site. Le moteur et l'agent revalident de leur cote.
 const FORMATS = ["9:16", "4:5", "1:1", "16:9"];
 const CATS = ["auto", "chat", "irl", "gaming", "podcast"];
+const LAYOUTS = ["auto", "full", "split"];
 export function cleanOpts(o) {
   o = o && typeof o === "object" ? o : {};
   const opts = {
     format: FORMATS.includes(o.format) ? o.format : "9:16",
     cat: CATS.includes(o.cat) ? o.cat : "auto",
+    layout: LAYOUTS.includes(o.layout) ? o.layout : "auto",
     cut: o.cut !== false,
     title: o.title !== false,
     find: String(o.find || "").replace(/\s+/g, " ").trim().slice(0, 200),
